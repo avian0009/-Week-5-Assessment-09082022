@@ -1,0 +1,169 @@
+
+########################################################################---ASSESMENT 4----######################################################################################################
+
+
+***********************************************************************************
+
+Q.1 How to create table with same structure with data?
+ans->
+
+CREATE TABLE avinashTable SELECT * FROM users;
+
+************************************************************************************
+
+
+Q.2 How to create table with same structure without data?
+
+ans->
+
+CREATE TABLE suppliers AS (SELECT * FROM companies WHERE 1=2);
+
+
+************************************************************************************
+
+
+3.  How to display Last 10 records from Student table.
+ans->
+
+    SELECT * FROM (
+    SELECT * FROM Student ORDER BY id DESC LIMIT 10
+    )Var1
+   ORDER BY id ASC;
+
+  
+
+Minimum salary
+
+   SELECT name,salary FROM employee where salary
+   = (select min(salary) from employee);
+
+ 
+Maximum salary
+
+SELECT name,salary FROM employee where salary
+= (select max(salary) from employee);
+
+
+---toggether----
+
+WITH t1 AS (
+    SELECT name, salary FROM Employee where salary
+    = (select max(salary) from Employee) ),
+t2 AS (    
+    SELECT name, salary FROM Employee where salary
+    = (select min(salary) from Employee) )
+SELECT
+    t1.name AS MAX_NAME, t1.salaray AS MAX_SALARY, t2.name AS MIN_NAME, t2.salaray AS MIN_SALARY
+FROM t1 LEFT JOIN t2 ON 1=1
+
+**************************************************************************************
+
+
+4.Create a SQL Table and Read it’s record by using Template.
+
+ans->
+
+SELECT name
+
+FROM sys.databases
+
+WHERE name = N'AvinashDB'
+
+DROP DATABASE AvinashDB
+
+GO
+
+CREATE DATABASE AvinashDB
+
+GO
+
+
+******************************************************************************************
+
+
+Q.5 List the Students whose name starts with P and surname starts with S.
+ans->
+SELECT * FROM students WHERE NAME LIKE 'P%' and SURNAME LIKE 'S%';
+
+
+******************************************************************************************
+
+
+Q.6 How to fetch last record from Student table.
+
+Select * from Student where rowid = select max(rowid) from Student;
+
+
+*******************************************************************************************
+
+
+Q.7  
+
+ans->
+
+
+REATE TABLE Employees
+(
+    EmployeeID int NOT NULL PRIMARY KEY,
+    FirstName varchar(50) NOT NULL,
+    LastName varchar(50) NOT NULL,
+    ManagerID int NULL
+)
+
+INSERT INTO Employees VALUES(1,'Aastha', 'Maggu',NULL)
+INSERT INTO Employees VALUES(2,'Arihant', 'Jain',1)
+INSERT INTO Employees VALUES(3,'Devansh', 'Tiwari',1)
+INSERT INTO Employees VALUES(4,'Khadar', 'Afghan',2)
+INSERT INTO Employees VALUES(5,'Avinash', 'Sharma',2)
+INSERT INTO Employees VALUES(6,'Tejashwini', 'Dinne',3)
+INSERT INTO Employees VALUES(7,'B', 'Snega',3)
+INSERT INTO Employees VALUES(8,'Bogla', 'Navya',5)
+INSERT INTO Employees VALUES(9,'Vandana', 'Hegde',4)
+INSERT INTO Employees VALUES(10,'Darshan', 'Patgar',4)
+
+select * from Employees;
+
+WITH
+    cteReports(EmpID, FirstName,LastName,MgrID,EmpLevel)
+    AS
+    (
+        SELECT EMPLOYEEID, FirstName,LastName,ManagerID,1
+        FROM Employees
+        WHERE ManagerID IS NULL
+        UNION ALL
+        SELECT e.EmployeeID, e.FirstName, e.LastName, e.ManagerID,
+            r.EmpLevel +1
+            FROM Employees e 
+            INNER JOIN cteReports r 
+            ON e.ManagerID = r.EmpID
+    )
+
+    SELECT 
+        FirstName + ' ' + LastName As FullName,
+        EmpLevel,
+        (SELECT FirstName + ' ' + LASTName FROM Employees
+        WHERE EmployeeID = cteReports.MgrID) AS Manager
+        From cteReports
+        ORDER BY EmpLevel, MgrID
+
+**********************************************************************************************************
+
+
+Q.8 
+
+ans->
+
+Trigger Example :
+   CREAT TRIGGER student_trigger
+   before Insert
+   ON student
+   FOR EACH ROW
+   SET new.marks = new.marks+6;
+   
+   Update Example :
+   UPDATE Customers
+   SET ContactName = 'Abcd', Location= 'Delhi'
+   WHERE CustomerID = 3;
+
+   delete Example :
+   DELETE FROM Customers WHERE CustomerName='XYZ';
